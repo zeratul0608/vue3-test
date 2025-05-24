@@ -9,22 +9,53 @@
     <p v-if="canvasStore.components.length === 0 && !isDragOver" class="placeholder-text">
       Drop components here
     </p>
-    <div
-      v-for="component in canvasStore.components"
-      :key="component.id"
-      class="rendered-component"
-      :style="{ left: component.x + 'px', top: component.y + 'px' }"
-    >
-      Type: {{ component.type }} <br />
-      ID: {{ component.id.substring(0, 8) }}... <br />
-      X: {{ component.x }}, Y: {{ component.y }}
-    </div>
+    <template v-for="component in canvasStore.components" :key="component.id">
+      <form-component-vue
+        v-if="component.type === 'Form'"
+        :component="component"
+        class="rendered-component"
+        :style="{ left: component.x + 'px', top: component.y + 'px' }"
+      />
+      <input-component-vue
+        v-else-if="component.type === 'Input'"
+        :component="component"
+        class="rendered-component"
+        :style="{ left: component.x + 'px', top: component.y + 'px' }"
+      />
+      <select-component-vue
+        v-else-if="component.type === 'Select'"
+        :component="component"
+        class="rendered-component"
+        :style="{ left: component.x + 'px', top: component.y + 'px' }"
+      />
+      <table-component-vue
+        v-else-if="component.type === 'Table'"
+        :component="component"
+        class="rendered-component"
+        :style="{ left: component.x + 'px', top: component.y + 'px' }"
+      />
+      <div
+        v-else 
+        class="rendered-component"
+        :style="{ left: component.x + 'px', top: component.y + 'px' }"
+      >
+        Type: {{ component.type }} <br />
+        ID: {{ component.id.substring(0, 8) }}... <br />
+        X: {{ component.x }}, Y: {{ component.y }}
+      </div>
+    </template>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useCanvasStore } from '../stores/canvasStore.js';
+// Import Vue components
+import FormComponentVue from './FormComponent.vue';
+import InputComponentVue from './InputComponent.vue';
+import SelectComponentVue from './SelectComponent.vue';
+import TableComponentVue from './TableComponent.vue'; // Added
+// Import class definitions from core
 import { FormComponent, TableComponent, InputComponent, SelectComponent, BaseComponent } from '../core/components.js';
 
 const canvasStore = useCanvasStore();
@@ -63,7 +94,7 @@ const handleDrop = (event) => {
 
   switch (componentType) {
     case 'Form':
-      newComponent = new FormComponent(componentProps);
+      newComponent = new FormComponent({ ...componentProps, children: [] }); // Ensure FormComponent always has a children array
       break;
     case 'Table':
       newComponent = new TableComponent(componentProps);
@@ -90,40 +121,55 @@ const handleDrop = (event) => {
 <style scoped>
 .canvas-area {
   flex-grow: 1;
-  height: 100%;
-  background-color: #ffffff;
-  border: 2px dashed #cccccc;
-  border-radius: 8px;
-  padding: 20px;
+  /* Height is determined by parent .right-panel which has display:flex */
+  background-color: var(--color-background-panel); /* Use panel background for canvas itself */
+  border: 2px dashed var(--color-border-soft);
+  border-radius: 8px; /* Larger radius for a softer feel */
+  /* Padding is handled by parent .right-panel or can be added if needed for content alignment */
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-  transition: background-color 0.2s ease, border-color 0.2s ease; /* For drag over effect */
-  position: relative; /* Needed for absolute positioning of children if any */
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.04); /* Softer inset shadow */
+  transition: var(--transition-medium); /* Use global transition */
+  position: relative;
+  overflow: auto; /* Allow scrolling if content overflows */
 }
 
 .canvas-area.drag-over {
-  background-color: #e8f0fe; /* Light blue background when dragging over */
-  border-color: #4a90e2; /* Blue border when dragging over */
+  background-color: var(--color-background-alt); /* Slightly darker for general drag over */
+  border-color: var(--color-primary); /* Muted blue border */
+  box-shadow: inset 0 0 10px rgba(var(--color-primary-rgb, 160, 196, 255), 0.1); /* Soft glow */
 }
 
 .placeholder-text {
-  font-size: 1.2em;
-  color: #aaaaaa;
+  font-size: 1.3em; /* Larger placeholder text */
+  color: var(--color-text-muted);
   text-align: center;
+  user-select: none; /* Prevent text selection */
 }
 
 /* Styling for the dynamically rendered components */
 .rendered-component {
   position: absolute;
-  background-color: #a0c4ff; /* Light blue */
-  border: 1px solid #6a9eda; /* Darker blue border */
-  padding: 8px;
-  border-radius: 4px;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
-  font-size: 0.85em;
-  white-space: nowrap; /* Prevent text wrapping for simple display */
-  cursor: default; /* Later this could be 'move' */
+  /* 
+    This class primarily handles positioning.
+    Specific components (FormComponentVue, InputComponentVue, etc.) should define
+    their own appearance (background, border, padding).
+    A minimal default can be provided for unknown component types.
+  */
+  background-color: var(--color-background-alt); /* Default for unknown types */
+  border: 1px solid var(--color-border-soft);
+  padding: 10px;
+  border-radius: 6px; /* Consistent radius */
+  box-shadow: var(--box-shadow-medium); /* Consistent shadow */
+  font-size: 0.9em;
+  cursor: default; /* Will change to 'move' when dragging is implemented */
+  transition: var(--transition-short); /* Smooth transitions for any style changes */
+}
+
+/* Ensure components don't have excessive padding/margin if they are self-contained visual blocks */
+.rendered-component > :deep(div:first-child),
+.rendered-component > :deep(table:first-child) {
+  margin: 0; /* Reset margins if the component's root is a div/table */
 }
 </style>
