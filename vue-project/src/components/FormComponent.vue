@@ -22,87 +22,87 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { defineProps, ref } from 'vue';
-import { useCanvasStore } from '../stores/canvasStore.js';
-import { InputComponent, SelectComponent } from '../core/components.js'; // These are the CLASS definitions
-import InputComponentVue from './InputComponent.vue'; // This is the VUE component
-import SelectComponentVue from './SelectComponent.vue'; // This is the VUE component
+import { useCanvasStore } from '../stores/canvasStore.ts'; // Updated import path
+import { 
+  InputComponent as InputComponentClass, 
+  SelectComponent as SelectComponentClass,
+  type FormComponentData, // Using type for interface import
+  type FormChildComponent // This is InputComponentData | SelectComponentData from core/components if using data interfaces, or InputComponentClass | SelectComponentClass
+} from '../core/components.ts'; // Updated import path
 
-const props = defineProps({
-  component: {
-    type: Object,
-    required: true,
-  },
-});
+// Import Vue components for rendering
+import InputComponentVue from './InputComponent.vue'; 
+import SelectComponentVue from './SelectComponent.vue';
+
+// Define Props interface
+interface Props {
+  component: FormComponentData; // Use the imported FormComponentData interface
+}
+const props = defineProps<Props>();
 
 const canvasStore = useCanvasStore();
-const isDragOverForm = ref(false);
+const isDragOverForm = ref<boolean>(false);
 
-const handleDragOverForm = (event) => {
+const handleDragOverForm = (event: DragEvent): void => {
   event.preventDefault();
-  // Check if the dragged item is suitable (Input or Select)
   const draggedType = event.dataTransfer?.getData('text/plain');
   if (draggedType === 'Input' || draggedType === 'Select') {
     if (event.dataTransfer) {
-        event.dataTransfer.dropEffect = 'copy';
+      event.dataTransfer.dropEffect = 'copy';
     }
     isDragOverForm.value = true;
-    event.stopPropagation(); // Prevent CanvasArea from reacting
+    event.stopPropagation(); 
   } else {
-     if (event.dataTransfer) {
-        event.dataTransfer.dropEffect = 'none'; // Indicate not a valid drop target
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = 'none'; 
     }
   }
 };
 
-const handleDragLeaveForm = () => {
+const handleDragLeaveForm = (): void => { // Added return type
   isDragOverForm.value = false;
 };
 
-const handleDropInForm = (event) => {
+const handleDropInForm = (event: DragEvent): void => {
   event.preventDefault();
-  event.stopPropagation(); // Crucial: Stop event from bubbling to CanvasArea
+  event.stopPropagation(); 
   isDragOverForm.value = false;
 
   if (!event.dataTransfer) return;
 
-  const componentType = event.dataTransfer.getData('text/plain');
+  const componentType: string = event.dataTransfer.getData('text/plain');
   
-  // We don't need to calculate x/y relative to this component for now,
-  // as child components' positions within the form might be handled by layout flow or fixed later.
-  // For now, they are just added to the children array.
-  
-  let newChildComponent;
-  const childProps = { 
-    // x and y are relative to the parent Form, can be set to 0 or managed by layout later
-    x: 0, 
-    y: 0 
-  }; 
+  // newChildComponent will be an instance of InputComponentClass or SelectComponentClass
+  let newChildComponent: FormChildComponent | undefined; 
+  const childProps = { x: 0, y: 0 }; 
 
   switch (componentType) {
     case 'Input':
-      newChildComponent = new InputComponent({ ...childProps, label: 'New Input' });
+      newChildComponent = new InputComponentClass({ ...childProps, label: 'New Input' });
       break;
     case 'Select':
-      newChildComponent = new SelectComponent({ ...childProps, label: 'New Select', options: [{value: '1', text: 'Option 1'}] });
+      // Default options are handled by SelectComponentClass constructor
+      newChildComponent = new SelectComponentClass({ ...childProps, label: 'New Select' }); 
       break;
     default:
       console.warn(`Invalid component type '${componentType}' dropped into FormComponent.`);
-      return; // Do not add if not Input or Select
+      return; 
   }
 
-  if (newChildComponent) {
-    canvasStore.addChildToComponent({
-      parentId: props.component.id,
-      childComponent: newChildComponent,
-    });
-    console.log(`Dropped ${componentType} into Form ${props.component.id}. Child added:`, newChildComponent);
-  }
+  // No need to check newChildComponent for undefined here because the default case in switch returns.
+  // However, TypeScript might still think it could be undefined if not all paths assign.
+  // The return in default case handles this.
+  canvasStore.addChildToComponent({
+    parentId: props.component.id,
+    childComponent: newChildComponent, // Type is FormChildComponent (InputComponentClass | SelectComponentClass)
+  });
+  console.log(`Dropped ${componentType} into Form ${props.component.id}. Child added:`, newChildComponent);
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .form-component-area {
   border: 2px dashed var(--color-border-soft); 
   padding: 20px; /* Increased padding */

@@ -15,17 +15,23 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 
-const availableComponents = ref([
-  { name: 'Form', type: 'Form' }, // 'type' can be used to map to class names if needed
+interface DraggableComponent {
+  name: string;
+  type: string; // This could be further restricted, e.g., 'Form' | 'Table' | 'Input' | 'Select'
+}
+
+const availableComponents = ref<DraggableComponent[]>([
+  { name: 'Form', type: 'Form' },
   { name: 'Table', type: 'Table' },
   { name: 'Input', type: 'Input' },
   { name: 'Select', type: 'Select' },
 ]);
 
-const handleDragStart = (event, componentType) => {
+// The template passes componentType directly, which is DraggableComponent
+const handleDragStart = (event: DragEvent, componentType: DraggableComponent): void => {
   if (event.dataTransfer) {
     event.dataTransfer.setData('text/plain', componentType.type);
     event.dataTransfer.dropEffect = 'copy';
@@ -36,7 +42,7 @@ const handleDragStart = (event, componentType) => {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .component-menu {
   /* Padding is handled by the left-panel in App.vue, or can be added if this component is used elsewhere */
   /* background-color: var(--color-background-panel); /* Already set by left-panel */

@@ -47,54 +47,59 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
-import { useCanvasStore } from '../stores/canvasStore.js';
+import { useCanvasStore, CanvasComponent } from '../stores/canvasStore.ts'; // Updated import path & import CanvasComponent type
 // Import Vue components
 import FormComponentVue from './FormComponent.vue';
 import InputComponentVue from './InputComponent.vue';
 import SelectComponentVue from './SelectComponent.vue';
-import TableComponentVue from './TableComponent.vue'; // Added
+import TableComponentVue from './TableComponent.vue';
 // Import class definitions from core
-import { FormComponent, TableComponent, InputComponent, SelectComponent, BaseComponent } from '../core/components.js';
+import { 
+  BaseComponent, 
+  FormComponent, 
+  TableComponent, 
+  InputComponent, 
+  SelectComponent 
+} from '../core/components.ts'; // Updated import path
 
-const canvasStore = useCanvasStore();
-const isDragOver = ref(false);
+const canvasStore = useCanvasStore(); // Typed by Pinia
+const isDragOver = ref<boolean>(false); // Renamed dragOverClass to isDragOver for clarity
 
-const handleDragOver = (event) => {
-  event.preventDefault(); // Necessary to allow dropping
+const handleDragOver = (event: DragEvent): void => {
+  event.preventDefault(); 
   if (event.dataTransfer) {
     event.dataTransfer.dropEffect = 'copy';
   }
   isDragOver.value = true;
-  // console.log('Drag over canvas');
 };
 
-const handleDragLeave = () => {
+const handleDragLeave = (event: DragEvent): void => { // event param added for consistency, though not used
   isDragOver.value = false;
 };
 
-const handleDrop = (event) => {
+const handleDrop = (event: DragEvent): void => {
   event.preventDefault();
   isDragOver.value = false;
-  if (!event.dataTransfer || !event.currentTarget) return;
+  
+  const currentTarget = event.currentTarget as HTMLDivElement; // Type assertion
+  if (!event.dataTransfer || !currentTarget) return;
 
-  const componentType = event.dataTransfer.getData('text/plain');
-  const canvasRect = event.currentTarget.getBoundingClientRect();
+  const componentType: string = event.dataTransfer.getData('text/plain');
+  const rect: DOMRect = currentTarget.getBoundingClientRect();
 
-  // Calculate drop position relative to the canvas area
-  // clientX/Y are viewport coordinates. We need them relative to the target element.
-  const x = event.clientX - canvasRect.left;
-  const y = event.clientY - canvasRect.top;
+  const x: number = event.clientX - rect.left;
+  const y: number = event.clientY - rect.top;
 
   console.log(`Dropped type: ${componentType} at x:${x}, y:${y}`);
 
-  let newComponent;
+  let newComponent: CanvasComponent; // Use the union type
   const componentProps = { x, y };
 
   switch (componentType) {
     case 'Form':
-      newComponent = new FormComponent({ ...componentProps, children: [] }); // Ensure FormComponent always has a children array
+      newComponent = new FormComponent({ ...componentProps, children: [] });
       break;
     case 'Table':
       newComponent = new TableComponent(componentProps);
@@ -103,22 +108,19 @@ const handleDrop = (event) => {
       newComponent = new InputComponent(componentProps);
       break;
     case 'Select':
-      newComponent = new SelectComponent(componentProps);
+      newComponent = new SelectComponent(componentProps); // Default options are set in constructor
       break;
     default:
       console.warn(`Unknown component type dropped: ${componentType}`);
-      newComponent = new BaseComponent({ type: componentType, ...componentProps }); // Fallback
-      // return; // Or handle as an error / unrecognized component
+      newComponent = new BaseComponent({ type: componentType, ...componentProps });
   }
   
-  if (newComponent) {
-    canvasStore.addComponent(newComponent);
-    console.log('Component added to store:', canvasStore.getComponentById(newComponent.id));
-  }
+  canvasStore.addComponent(newComponent); // addComponent action expects CanvasComponent
+  console.log('Component added to store:', canvasStore.getComponentById(newComponent.id));
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .canvas-area {
   flex-grow: 1;
   /* Height is determined by parent .right-panel which has display:flex */
