@@ -25,15 +25,15 @@
 <script setup lang="ts">
 import { defineProps, ref } from 'vue';
 import { useCanvasStore } from '../stores/canvasStore.ts'; // Updated import path
-import { 
-  InputComponent as InputComponentClass, 
+import {
+  InputComponent as InputComponentClass,
   SelectComponent as SelectComponentClass,
   type FormComponentData, // Using type for interface import
   type FormChildComponent // This is InputComponentData | SelectComponentData from core/components if using data interfaces, or InputComponentClass | SelectComponentClass
 } from '../core/components.ts'; // Updated import path
 
 // Import Vue components for rendering
-import InputComponentVue from './InputComponent.vue'; 
+import InputComponentVue from './InputComponent.vue';
 import SelectComponentVue from './SelectComponent.vue';
 
 // Define Props interface
@@ -53,10 +53,10 @@ const handleDragOverForm = (event: DragEvent): void => {
       event.dataTransfer.dropEffect = 'copy';
     }
     isDragOverForm.value = true;
-    event.stopPropagation(); 
+    event.stopPropagation();
   } else {
     if (event.dataTransfer) {
-      event.dataTransfer.dropEffect = 'none'; 
+      event.dataTransfer.dropEffect = 'none';
     }
   }
 };
@@ -67,16 +67,16 @@ const handleDragLeaveForm = (): void => { // Added return type
 
 const handleDropInForm = (event: DragEvent): void => {
   event.preventDefault();
-  event.stopPropagation(); 
+  event.stopPropagation();
   isDragOverForm.value = false;
 
   if (!event.dataTransfer) return;
 
   const componentType: string = event.dataTransfer.getData('text/plain');
-  
+
   // newChildComponent will be an instance of InputComponentClass or SelectComponentClass
-  let newChildComponent: FormChildComponent | undefined; 
-  const childProps = { x: 0, y: 0 }; 
+  let newChildComponent: FormChildComponent | undefined;
+  const childProps = { x: 0, y: 0 };
 
   switch (componentType) {
     case 'Input':
@@ -84,11 +84,11 @@ const handleDropInForm = (event: DragEvent): void => {
       break;
     case 'Select':
       // Default options are handled by SelectComponentClass constructor
-      newChildComponent = new SelectComponentClass({ ...childProps, label: 'New Select' }); 
+      newChildComponent = new SelectComponentClass({ ...childProps, label: 'New Select' });
       break;
     default:
       console.warn(`Invalid component type '${componentType}' dropped into FormComponent.`);
-      return; 
+      return;
   }
 
   // No need to check newChildComponent for undefined here because the default case in switch returns.
@@ -104,9 +104,9 @@ const handleDropInForm = (event: DragEvent): void => {
 
 <style lang="scss" scoped>
 .form-component-area {
-  border: 2px dashed var(--color-border-soft); 
+  border: 2px dashed var(--color-border-soft);
   padding: 20px; /* Increased padding */
-  min-height: 120px; 
+  min-height: 120px;
   background-color: var(--color-background-panel); /* Use panel background */
   border-radius: 6px; /* Consistent radius */
   position: relative;
@@ -123,7 +123,7 @@ const handleDropInForm = (event: DragEvent): void => {
 :global(.rendered-component) > .form-component-area {
   /* Overrides for when FormComponent is a direct child of .rendered-component on canvas */
   /* Example: remove redundant shadow if .rendered-component already has one */
-   box-shadow: none; 
+   box-shadow: none;
 }
 /* Styles for when FormComponent is nested inside a Table cell */
 :global(.table-cell) > .form-component-area {

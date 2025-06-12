@@ -12,7 +12,7 @@ const exportToJson = (): void => {
   const componentsJson = JSON.stringify(canvasStore.components, null, 2); // canvasStore.components is already typed
   jsonOutput.value = componentsJson;
   showJsonOutput.value = true;
-  console.log(componentsJson); 
+  console.log(componentsJson);
 };
 
 const closeJsonOutput = (): void => {
@@ -86,7 +86,7 @@ const closeJsonOutput = (): void => {
   flex-grow: 1;
   background-color: var(--color-background-alt); /* Slightly darker off-white */
   display: flex;
-  position: relative; 
+  position: relative;
   padding: 15px; /* Added padding */
 }
 

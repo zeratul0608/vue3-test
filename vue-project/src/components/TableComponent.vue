@@ -26,8 +26,8 @@
       </thead>
       <tbody>
         <tr v-for="(row, rowIndex) in component.cells" :key="'row-' + rowIndex">
-          <td 
-            v-for="(cell, colIndex) in row" 
+          <td
+            v-for="(cell, colIndex) in row"
             :key="'col-' + rowIndex + '-' + colIndex"
             class="table-cell"
             :class="{ 'cell-drag-over': cellDragOverState[rowIndex] && cellDragOverState[rowIndex][colIndex] }"
@@ -230,12 +230,12 @@ const handleCellDrop = (event, rowIndex, colIndex) => {
 }
 
 .styled-table th,
-.table-cell { 
+.table-cell {
   border-bottom: 1px solid var(--color-border-soft); /* Horizontal lines */
-  padding: 0; 
+  padding: 0;
   text-align: left;
-  vertical-align: top; 
-  min-height: 50px; 
+  vertical-align: top;
+  min-height: 50px;
   position: relative;
 }
 .styled-table th:not(:last-child),
@@ -292,10 +292,10 @@ const handleCellDrop = (event, rowIndex, colIndex) => {
 
 .table-cell > :deep(.form-component-area) {
   margin: 0;
-  border: none; 
-  box-shadow: none; 
+  border: none;
+  box-shadow: none;
   padding: 8px; /* Consistent padding for nested forms */
-  min-height: 40px; 
+  min-height: 40px;
   background-color: transparent; /* Allow cell background to show if needed, or set explicitly */
   border-radius: 0; /* Forms inside cells might not need their own radius */
 }

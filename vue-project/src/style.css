@@ -18,7 +18,7 @@
   /* Transitions */
   --transition-short: all 0.2s ease-in-out;
   --transition-medium: all 0.3s ease-in-out;
-  
+
   /* Box Shadow */
   --box-shadow-soft: 0 2px 5px rgba(0, 0, 0, 0.05);
   --box-shadow-medium: 0 4px 10px rgba(0, 0, 0, 0.08);

@@ -56,7 +56,7 @@ export const useCanvasStore = defineStore('canvas', {
         // Ensure childComponent has an ID
         if (!childComponent.id) {
           console.error('Child component added without an ID:', childComponent);
-          return; 
+          return;
         }
         parentComponent.children.push(childComponent);
         console.log(`Child component ${childComponent.id} added to parent ${parentId}`);
@@ -72,7 +72,7 @@ export const useCanvasStore = defineStore('canvas', {
 
         table.rows = numRows;
         table.cols = numCols;
-        
+
         const parsedHeaders = headers.split(',').map(h => h.trim()).filter(h => h);
         if (parsedHeaders.length !== numCols) {
           table.headers = Array.from({ length: numCols }, (_, i) => `Header ${i + 1}`);
@@ -83,7 +83,7 @@ export const useCanvasStore = defineStore('canvas', {
 
         // Re-initialize cells to match new dimensions
         table.cells = Array(table.rows).fill(null).map(() => Array(table.cols).fill(null) as TableCellContent[]);
-        
+
         console.log(`Table ${componentId} configuration updated: ${numRows}x${numCols}, Headers:`, table.headers);
       } else {
         console.warn(`TableComponent with ID ${componentId} not found or is not a TableComponent.`);

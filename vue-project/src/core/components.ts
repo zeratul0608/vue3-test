@@ -91,7 +91,7 @@ export class TableComponent extends BaseComponent implements TableComponentData 
     } else {
       this.headers = Array.from({ length: this.cols }, (_, i) => `Header ${i + 1}`);
     }
-    
+
     // Ensure cells matrix matches actual rows and cols and is properly initialized
     if (cells.length === this.rows && cells.every(row => row.length === this.cols)) {
         this.cells = cells;

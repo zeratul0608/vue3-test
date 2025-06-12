@@ -83,12 +83,12 @@ const customizeOptions = () => {
   margin-bottom: 6px; /* Increased space */
   font-size: 0.9em;
   color: var(--color-text-muted); /* Muted color for label */
-  font-weight: 500; 
+  font-weight: 500;
 }
 
 .styled-select {
   /* Inherits global select styles from style.css for border, padding, radius, focus */
-  width: 100%; 
+  width: 100%;
   box-sizing: border-box;
   font-size: 0.95em; /* Ensure it's not too small */
   margin-bottom: 10px; /* Increased space before the button */
@@ -97,11 +97,11 @@ const customizeOptions = () => {
 .customize-btn {
   /* Inherits global button styles for basic look and feel */
   padding: 8px 12px; /* Slightly adjusted padding */
-  font-size: 0.85em; 
+  font-size: 0.85em;
   color: var(--color-text-main);
   background-color: var(--color-background-alt); /* Softer background */
   border: 1px solid var(--color-border-soft); /* Match global button border */
-  align-self: flex-start; 
+  align-self: flex-start;
 }
 
 .customize-btn:hover {

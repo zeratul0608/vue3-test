@@ -38,7 +38,7 @@ const props = defineProps({
 
 .styled-input {
   /* Inherits global input styles from style.css for border, padding, radius, focus */
-  width: 100%; 
+  width: 100%;
   box-sizing: border-box;
   font-size: 0.95em; /* Ensure it's not too small */
 }

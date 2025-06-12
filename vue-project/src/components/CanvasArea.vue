@@ -35,7 +35,7 @@
         :style="{ left: component.x + 'px', top: component.y + 'px' }"
       />
       <div
-        v-else 
+        v-else
         class="rendered-component"
         :style="{ left: component.x + 'px', top: component.y + 'px' }"
       >
@@ -56,19 +56,19 @@ import InputComponentVue from './InputComponent.vue';
 import SelectComponentVue from './SelectComponent.vue';
 import TableComponentVue from './TableComponent.vue';
 // Import class definitions from core
-import { 
-  BaseComponent, 
-  FormComponent, 
-  TableComponent, 
-  InputComponent, 
-  SelectComponent 
+import {
+  BaseComponent,
+  FormComponent,
+  TableComponent,
+  InputComponent,
+  SelectComponent
 } from '../core/components.ts'; // Updated import path
 
 const canvasStore = useCanvasStore(); // Typed by Pinia
 const isDragOver = ref<boolean>(false); // Renamed dragOverClass to isDragOver for clarity
 
 const handleDragOver = (event: DragEvent): void => {
-  event.preventDefault(); 
+  event.preventDefault();
   if (event.dataTransfer) {
     event.dataTransfer.dropEffect = 'copy';
   }
@@ -82,7 +82,7 @@ const handleDragLeave = (event: DragEvent): void => { // event param added for c
 const handleDrop = (event: DragEvent): void => {
   event.preventDefault();
   isDragOver.value = false;
-  
+
   const currentTarget = event.currentTarget as HTMLDivElement; // Type assertion
   if (!event.dataTransfer || !currentTarget) return;
 
@@ -114,7 +114,7 @@ const handleDrop = (event: DragEvent): void => {
       console.warn(`Unknown component type dropped: ${componentType}`);
       newComponent = new BaseComponent({ type: componentType, ...componentProps });
   }
-  
+
   canvasStore.addComponent(newComponent); // addComponent action expects CanvasComponent
   console.log('Component added to store:', canvasStore.getComponentById(newComponent.id));
 };
@@ -153,7 +153,7 @@ const handleDrop = (event: DragEvent): void => {
 /* Styling for the dynamically rendered components */
 .rendered-component {
   position: absolute;
-  /* 
+  /*
     This class primarily handles positioning.
     Specific components (FormComponentVue, InputComponentVue, etc.) should define
     their own appearance (background, border, padding).
