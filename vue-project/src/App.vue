@@ -1,21 +1,21 @@
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue';
 import ComponentMenu from './components/ComponentMenu.vue';
 import CanvasArea from './components/CanvasArea.vue';
-import { useCanvasStore } from './stores/canvasStore.ts'; // Updated import path
+import { useCanvasStore } from './stores/canvasStore.js'; // Changed to .js
 
 const canvasStore = useCanvasStore();
-const showJsonOutput = ref<boolean>(false);
-const jsonOutput = ref<string>('');
+const showJsonOutput = ref(false); // Removed type annotation
+const jsonOutput = ref(''); // Removed type annotation
 
-const exportToJson = (): void => {
-  const componentsJson = JSON.stringify(canvasStore.components, null, 2); // canvasStore.components is already typed
+const exportToJson = () => { // Removed return type annotation
+  const componentsJson = JSON.stringify(canvasStore.components, null, 2);
   jsonOutput.value = componentsJson;
   showJsonOutput.value = true;
   console.log(componentsJson);
 };
 
-const closeJsonOutput = (): void => {
+const closeJsonOutput = () => { // Removed return type annotation
   showJsonOutput.value = false;
   jsonOutput.value = '';
 };
@@ -42,7 +42,7 @@ const closeJsonOutput = (): void => {
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped> /* lang="scss" removed */
 /* :global styles for html, body, #app are now in style.css */
 
 .app-container {
